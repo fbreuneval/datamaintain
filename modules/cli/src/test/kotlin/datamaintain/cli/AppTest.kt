@@ -29,7 +29,7 @@ internal class AppTest {
                 ))
 
                 // When
-                App().subcommands(UpdateDb(runner = ::runner), ListExecutedScripts()).main(argv)
+                runUpdateDb(argv)
 
                 // Then
                 expectThat(configWrapper) {
@@ -50,7 +50,7 @@ internal class AppTest {
                 ))
 
                 // When
-                App().subcommands(UpdateDb(runner = ::runner), ListExecutedScripts()).main(argv)
+                runUpdateDb(argv)
 
                 // Then
                 expectThat(configWrapper) {
@@ -62,6 +62,10 @@ internal class AppTest {
                     last().isEqualTo(SameScriptsAsExecutedCheck.NAME)
                 }
             }
+        }
+
+        private fun runUpdateDb(argv: List<String>) {
+            App().subcommands(UpdateDb(runner = ::runner), ListExecutedScripts()).main(argv)
         }
 
         private fun updateDbMinimumArguments(): List<String> {
