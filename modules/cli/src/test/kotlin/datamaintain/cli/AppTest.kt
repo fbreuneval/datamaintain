@@ -7,6 +7,7 @@ import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import strikt.api.expectThat
 import strikt.assertions.*
+import java.nio.file.Paths
 
 internal class AppTest {
     data class ConfigWrapper(var datamaintainConfig: DatamaintainConfig? = null)
@@ -19,6 +20,22 @@ internal class AppTest {
 
     @Nested
     inner class UpdateDb {
+        @Test
+        fun `should build config with path`() {
+            // Given
+            val path = "myPath"
+
+            val argv = updateDbMinimumArguments().plus(listOf(
+                    "--path", path
+            ))
+
+            // When
+            runUpdateDb(argv)
+
+            // Then
+            expectThat(configWrapper.datamaintainConfig!!.path).get { Paths.get(path) }
+        }
+
         @Nested
         inner class Rules {
             @Test
