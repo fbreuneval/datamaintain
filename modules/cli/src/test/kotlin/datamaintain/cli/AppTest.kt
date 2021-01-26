@@ -243,7 +243,7 @@ internal class AppTest {
                 @Nested
                 inner class MongoSaveOutput {
                     @Test
-                    fun `should build config with create tags from folder set to true`() {
+                    fun `should build config with mongo save output set to true`() {
                         // Given
                         val argv = updateMongoDbMinimumArguments().plus("--mongo-save-output")
 
@@ -257,7 +257,7 @@ internal class AppTest {
                     }
 
                     @Test
-                    fun `should build config with create tags from folder set to false`() {
+                    fun `should build config with mongo save output set to false`() {
                         // Given
                         val argv = updateMongoDbMinimumArguments()
 
