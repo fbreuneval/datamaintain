@@ -5,8 +5,12 @@ import datamaintain.core.config.DatamaintainConfig
 import datamaintain.core.script.Tag
 import datamaintain.core.script.TagMatcher
 import datamaintain.core.step.check.rules.implementations.SameScriptsAsExecutedCheck
+import datamaintain.core.step.executor.ExecutionMode
+import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.params.ParameterizedTest
+import org.junit.jupiter.params.provider.EnumSource
 import strikt.api.expectThat
 import strikt.assertions.*
 import java.nio.file.Paths
@@ -53,6 +57,22 @@ internal class AppTest {
 
             // Then
             expectThat(configWrapper.datamaintainConfig!!.identifierRegex.pattern).isEqualTo(identifierRegex)
+        }
+
+        @ParameterizedTest
+        @EnumSource
+        @DisplayName("Should build config with execution mode {0}")
+        fun `should build config with execution mode`(executionMode: ExecutionMode) {
+            // Given
+            val argv = updateDbMinimumArguments().plus(listOf(
+                    "--execution-mode", executionMode.name
+            ))
+
+            // When
+            runUpdateDb(argv)
+
+            // Then
+            expectThat(configWrapper.datamaintainConfig!!.executionMode).isEqualTo(executionMode)
         }
 
         @Nested
