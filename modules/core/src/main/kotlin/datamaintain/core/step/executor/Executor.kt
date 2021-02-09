@@ -41,7 +41,6 @@ class Executor(private val context: Context) {
                     logger.info { "${executedScript.name} only marked (not really executed)" }
                 }
                 ExecutionStatus.KO -> {
-                    context.reportBuilder.inError(executedScript)
                     logger.info { "${executedScript.name} has not been correctly executed" }
                     // TODO handle interactive shell
                     return context.reportBuilder.toReport()
