@@ -1,0 +1,69 @@
+name: CI
+
+# Run this workflow every time a new commit pushed to your repository
+on: push
+
+jobs:
+  # Set the job key. The key is displayed as the job name
+  # when a job name is not provided
+  build-job:
+    # Name the Job
+    name: The build job
+    # Set the type of machine to run on
+    runs-on: ubuntu-latest
+
+    steps:
+      - run: echo '[mongodb-org-4.0]' > /etc/yum.repos.d/mongodb-org-4.0.repo
+      - run: echo 'name=MongoDB Repository' >> /etc/yum.repos.d/mongodb-org-4.0.repo
+      - run: echo 'baseurl=https://repo.mongodb.org/yum/redhat/$releasever/mongodb-org/4.0/x86_64/' >> /etc/yum.repos.d/mongodb-org-4.0.repo
+      - run: echo 'gpgcheck=1' >> /etc/yum.repos.d/mongodb-org-4.0.repo
+      - run: echo 'enabled=1' >> /etc/yum.repos.d/mongodb-org-4.0.repo
+      - run: echo 'gpgkey=https://www.mongodb.org/static/pgp/server-4.0.asc' >> /etc/yum.repos.d/mongodb-org-4.0.repo
+      - run: cat /etc/yum.repos.d/mongodb-org-4.0.repo
+      - run: rpm --import https://www.mongodb.org/static/pgp/server-4.0.asc
+      - run: apt-get install -y mongodb-org-shell # better solution should be create custom image and use mo
+
+      # Checks out a copy of your repository on the ubuntu-latest machine
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Build
+        run: ./gradlew build
+
+  test-job:
+    name: The test job
+    runs-on: ubuntu-latest
+
+    steps:
+      - run: echo '[mongodb-org-4.0]' > /etc/yum.repos.d/mongodb-org-4.0.repo
+      - run: echo 'name=MongoDB Repository' >> /etc/yum.repos.d/mongodb-org-4.0.repo
+      - run: echo 'baseurl=https://repo.mongodb.org/yum/redhat/$releasever/mongodb-org/4.0/x86_64/' >> /etc/yum.repos.d/mongodb-org-4.0.repo
+      - run: echo 'gpgcheck=1' >> /etc/yum.repos.d/mongodb-org-4.0.repo
+      - run: echo 'enabled=1' >> /etc/yum.repos.d/mongodb-org-4.0.repo
+      - run: echo 'gpgkey=https://www.mongodb.org/static/pgp/server-4.0.asc' >> /etc/yum.repos.d/mongodb-org-4.0.repo
+      - run: cat /etc/yum.repos.d/mongodb-org-4.0.repo
+      - run: rpm --import https://www.mongodb.org/static/pgp/server-4.0.asc
+      - run: yum install -y mongodb-org-shell # better solution should be create custom image and use mo
+
+      # Checks out a copy of your repository on the ubuntu-latest machine
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Grant execute permission for gradlew
+        run: chmod +x gradlew
+
+      - name: Run tests
+        run: ./gradlew test
+
+      - name: Assemble & Graal Check Native
+        run: ./gradlew graalCheckNative
+
+      - name: Assemble
+        run: ./gradlew assemble
+
+      # Runs the Super-Linter action
+      - name: Run Super-Linter
+        uses: github/super-linter@v3
+        env:
+          DEFAULT_BRANCH: main
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
